@@ -1,0 +1,21 @@
+{
+	"origin_dtu_id":"dtu1",
+	"dtu_id":"dtu1",
+	"dev_id":"device",
+	// 		ip address	 | gateway 	   | submask
+	"net":["192.168.3.20","192.168.3.1","255.255.255.0"],
+	// 		MQTT server  | port | username	 | password		 | subscribe   | publish   | publish interval 
+	"mqtt":["192.168.3.3","1883","iot_device","iot_device123","sensor/down","sensor/up","5"],
+	// 		name | coefficient | constant | unit
+	"voltage":["voltage","1","0","mV"],
+	// 		name | coefficient | constant | unit 
+	"current":["current","1","0","mA"],
+	//		device address | read interval | data format
+	"modbus":["1","5","0"],
+	//		name | function code | register address | data type | coefficient | constant | unit
+	"reg1":["Pressure","4","23","4","1.000","0.000","MPa"],
+	"reg2":["Speed","3","1","1","1.000","0.000","m/s"]
+}
+
+// data format (0-ABCD, 1-DCBA, 2-BADC, 3-CDAB)
+// data type (0-signed short, 1-unsigned short, 2-signed long, 3-unsigned long, 4-float, 5-double)

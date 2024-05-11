@@ -2,23 +2,88 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" type="text/css" href="styles/style.css">
-	<title>Demo</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<title>物联网关设置</title>
+	<link rel="stylesheet" href="style.css">
+	<script type="text/javascript" src="main.js"></script>
+	<script type="text/javascript" src="set.js"></script>
+	<script type="text/javascript" src="value.js"></script>
 </head>
 <body>
-<h1>Mozilla is cool</h1>
-<img src="images/firefox.jpg" alt="Firfox图标：一只环绕地球的火狐">
-<p>At Mozilla, we're a global community of</p>
-<ul>
-	<li>technologists</li>
-	<li>thinkers</li>
-	<li>builders</li>
-</ul>
-<p>working together to keep the Internet alive and accessible, so people worldwide can be informed contributors and creators of the Web. We believe this act of human collaboration across an open platform is essential to individual growth and our collective future.</p>
-<p>Read the <a href="https://www.mozilla.org/zh-CN/about/manifesto/">Mozilla Manifesto</a> to learn even more about the values and principles that guide the pursuit of our mission.</p>
-<button>切换用户</button>
-
-<script type="text/javascript" src="scripts/main.js" defer></script>
+	<form id="post_form">
+		<fieldset>
+			<legend>ID设置</legend>
+			<span class="id"><label for="dtu_id">DTU ID：</label> <input type="text" id="dtu_id" name="dtu" maxlength="31"></span>
+			<span class="id"><label for="dev_id">设备ID：</label> <input type="text" id="dev_id" name="submask" maxlength="31"></span>
+		</fieldset>		
+		<fieldset>
+			<legend>网络设置</legend>
+			<span class="net"><label for="ipaddr">IP地址：</label> <input type="text" id="ipaddr" name="ipaddr" maxlength="15"></span>
+			<span class="net"><label for="gateway">网关：</label> <input type="text" id="gateway" name="gateway" maxlength="15"></span>
+			<span class="net"><label for="<sub></sub>">子网掩码：</label> <input type="text" id="submask" name="submask" maxlength="15"></span>
+		</fieldset>
+		<fieldset>
+			<legend>MQTT服务器设置</legend>
+			<span class="mqtt"><label for="mqtt_addr">地址：</label><input type="text" id="mqtt_addr" name="mqtt_addr" maxlength="15"></span>
+			<span class="mqtt"><label for="mqtt_port">端口：</label> <input type="number" oninput="if (value<1) value=1; if(value>65535) value=65535;" id="mqtt_port" name="mqtt_port"></span><br>
+			<span class="mqtt"><label for="username">用户名：</label> <input type="text" id="username" name="username" maxlength="31"></span>
+			<span class="mqtt"><label for="password">密码：</label> <input type="password" id="password" name="password" maxlength="31"></span><br>
+			<span class="mqtt"><label for="sub_topic">订阅主题：</label> <input type="text" id="sub_topic" name="sub_topic" maxlength="63"></span>
+			<span class="mqtt"><label for="pub_topic">发布主题：</label> <input type="text" id="pub_topic" name="pub_topic" maxlength="63"></span>
+			<span class="mqtt"><label for="pub_time">发布间隔：</label> <input type="number" oninput="if (value<1) value=1; if(value>65535) value=65535;" id="pub_time" name="pub_time"></span><br>
+		</fieldset>
+		<fieldset>
+			<legend>传感器设置</legend>
+			<span>
+				<input type="radio" name="sensor" value="sensor_volt" id="sensor_volt" onclick="display_sensor_setting(this.id+'_setting')"><label for="sensor_volt">电压传感器</label><br>
+				<input type="radio" name="sensor" value="sensor_curr" id="sensor_curr" onclick="display_sensor_setting(this.id+'_setting')"><label for="sensor_curr">电流传感器</label><br>
+				<input type="radio" name="sensor" value="sensor_modbus" id="sensor_modbus" onclick="display_sensor_setting(this.id+'_setting')"><label for="sensor_modbus">Modbus设备</label>
+			</span>
+		</fieldset>
+		<fieldset id="sensor_volt_setting">
+			<legend>电压传感器</legend>
+			<span class="sensor">
+				<label for="volt_name">名称：</label><input type="text" name="volt_name" id="volt_name" maxlength="15">
+				<label for="volt_coefficient">系数：</label><input type="number" name="volt_coefficient" id="volt_coefficient" step="0.001">
+				<label for="volt_constant">常数：</label><input type="number" name="volt_constant" id="volt_constant" step="0.001">
+				<label for="volt_uint">单位：</label><input type="text" name="volt_unit" id="volt_unit" maxlength="15">					
+			</span>			
+		</fieldset>
+		<fieldset id="sensor_curr_setting">
+			<legend>电流传感器</legend>
+			<span class="sensor">
+				<label for="curr_name">名称：</label><input type="text" name="curr_name" id="curr_name" maxlength="15">
+				<label for="curr_coefficient">系数：</label><input type="number" name="curr_coefficient" id="curr_coefficient" step="0.001">
+				<label for="curr_constant">常数：</label><input type="number" name="curr_constant" id="curr_constant" step="0.001">
+				<label for="curr_unit">单位：</label><input type="text" name="curr_unit" id="curr_unit" maxlength="15">							
+			</span>
+		</fieldset>
+		<fieldset id="sensor_modbus_setting">
+			<legend>Modbus设备</legend>
+			<span class="modbus"><label for="dev_addr">设备地址：</label> <input type="number" oninput="if (value<1) value=1; if(value>254) value=254;" id="dev_addr" name="dev_addr"></span>
+			<span class="modbus"><label for="read_time">读取间隔：</label> <input type="number" oninput="if (value<1) value=1; if(value>65535) value=65535;" id="read_time" name="read_time"></span>
+			<span class="modbus"><label for="format">数据格式：</label>
+				<select id="format" name="format">
+					<option value="0">大端（ABCD)</option>
+					<option value="1">小端（DCBA)</option>
+					<option value="2">大端字节对调（BADC)</option>
+					<option value="3">小端字节对调（CDAB)</option>
+				</select>
+			</span>
+			<span class="modbus"><label for="plc">PLC地址模式</label> <input type="checkbox" id="plc" name="plc" checked="true" disabled="true">	</span>
+			<hr>
+			<div id="reg_list">
+			</div>
+			<hr>
+			<div>
+				<input type="button" id="add" name="add" value="添加寄存器" onclick="add_reg()">
+				<input type="button" id="remove" name="remove" value="删除寄存器" onclick="remove_reg()"><br>
+			</div>
+		</fieldset>
+	</form>
+	<script type="text/javascript">
+		set_values();
+		add_submit_button();
+	</script>
 </body>
 </html>
